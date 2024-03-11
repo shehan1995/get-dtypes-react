@@ -2,6 +2,8 @@
 
 Welcome to the sample app! This repository contains the source code for a react frontend which connect with {backend} to get Data types of a uploaded dataset. Follow the instructions below to set it up and run it locally on your machine.
 
+DEMO : https://react-frontend-aa41f.web.app/
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
