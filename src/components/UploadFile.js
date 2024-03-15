@@ -65,7 +65,10 @@ class UploadFile extends Component {
       );
 
       axios
-        .post("http://127.0.0.1:8000/server/process/", formData)
+        .post(
+          "https://django-v1-7mpcovk33q-uc.a.run.app/server/process/",
+          formData
+        )
         .then((response) => {
           if (response.status === 200) {
             const initialEditedValues = {}; // Initialize edited values with original data
@@ -156,7 +159,7 @@ class UploadFile extends Component {
         dtypes: this.state.editedValues,
       };
       axios
-        .patch("http://127.0.0.1:8000/server/process/", req)
+        .patch("https://django-v1-7mpcovk33q-uc.a.run.app/server/process/", req)
         .then((response) => {
           if (response.status === 200) {
             this.setState({

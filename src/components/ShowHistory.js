@@ -28,7 +28,10 @@ class ShowHistory extends Component {
 
   renderAllRecords = () => {
     axios
-      .get("http://127.0.0.1:8000/server/process/")
+
+      // .get("http://127.0.0.1:8000/server/process/")
+
+      .get("https://django-v1-7mpcovk33q-uc.a.run.app/server/process/")
       .then((response) => {
         if (response.status === 200) {
           this.setState({
