@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import PopModal from "./Modal";
+import PopModal from "./../Modal";
 
 class ShowHistory extends Component {
   constructor(props) {
@@ -12,6 +12,51 @@ class ShowHistory extends Component {
   }
   state = {
     allRecords: null,
+    showAlert: false,
+    alertMessage: null,
+    alertType: null,
+  };
+
+  triggerAlert = () => {
+    let alertClass = "";
+    let closeButtonClass = "";
+
+    switch (this.state.alertType) {
+      case "alert":
+        alertClass = "alert alert-warning alert-dismissible fade show";
+        closeButtonClass = "btn-close";
+        break;
+      case "error":
+        alertClass = "alert alert-danger alert-dismissible fade show";
+        closeButtonClass = "btn-close";
+        break;
+      case "success":
+        alertClass = "alert alert-success alert-dismissible fade show";
+        closeButtonClass = "btn-close";
+        break;
+      default:
+        alertClass = "alert alert-info alert-dismissible fade show";
+        closeButtonClass = "btn-close";
+    }
+
+    if (this.state.showAlert) {
+      return (
+        <div className={alertClass} role="alert">
+          {this.state.alertMessage}
+          <button
+            type="button"
+            className={closeButtonClass}
+            data-bs-dismiss="alert"
+            aria-label="Close"
+            onClick={this.handleCloseAlert}
+          ></button>
+        </div>
+      );
+    }
+  };
+
+  handleCloseAlert = () => {
+    this.setState({ showAlert: false });
   };
 
   handleClose = () => {
@@ -26,20 +71,29 @@ class ShowHistory extends Component {
     this.renderAllRecords();
   }
 
+  // fetch all processed dataset data types from backend
   renderAllRecords = () => {
     axios
-      .get("http://127.0.0.1:8000/server/process/")
+      .get(process.env.REACT_APP_API_URL)
       .then((response) => {
         if (response.status === 200) {
           this.setState({
             allRecords: response.data,
           });
         } else {
-          console.log("error");
+          this.setState({
+            showAlert: true,
+            alertType: "error",
+            alertMessage: "Something Went Wrong",
+          });
         }
       })
       .catch((error) => {
-        console.log(error);
+        this.setState({
+          showAlert: true,
+          alertType: "error",
+          alertMessage: "Something Went Wrong",
+        });
       });
   };
 
@@ -89,7 +143,8 @@ class ShowHistory extends Component {
 
   render() {
     return (
-      <>
+      <div className="container">
+        <div>{this.triggerAlert()}</div>
         <div>
           <PopModal
             data={this.state.data}
@@ -102,7 +157,7 @@ class ShowHistory extends Component {
           <div className="card-header">Processed Files History</div>
           <div className="card-body">{this.showRecords()}</div>
         </div>
-      </>
+      </div>
     );
   }
 }

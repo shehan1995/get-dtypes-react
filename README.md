@@ -2,6 +2,8 @@
 
 Welcome to the sample app! This repository contains the source code for a react frontend which connect with {backend} to get Data types of a uploaded dataset. Follow the instructions below to set it up and run it locally on your machine.
 
+DEMO : https://react-frontend-aa41f.web.app/
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
@@ -42,6 +44,8 @@ Once you have installed all the dependencies, you can run the app locally. Follo
    yarn start
    ```
 
+Change .env file in root directory if you need to access backend running in local
+
 2. Open your browser and visit `http://localhost:3000` to view the app.
 
 ## Building the App
@@ -55,3 +59,7 @@ yarn build
 ```
 
 This will create a production build of the app in the `build` directory.
+
+## Contact
+
+If you have any questions or concerns, feel free to contact me at asrajakaruna@gmail.com.

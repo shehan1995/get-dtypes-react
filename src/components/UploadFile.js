@@ -5,22 +5,42 @@ class UploadFile extends Component {
   state = {
     selectedFile: null,
     responseData: null,
-    editedValues: {}, // Store edited values here
+    editedValues: {},
     showAlert: false,
     alertMessage: null,
+    alertType: null,
   };
 
+  // trigger alerts
   triggerAlert = () => {
+    let alertClass = "";
+    let closeButtonClass = "";
+
+    switch (this.state.alertType) {
+      case "alert":
+        alertClass = "alert alert-warning alert-dismissible fade show";
+        closeButtonClass = "btn-close";
+        break;
+      case "error":
+        alertClass = "alert alert-danger alert-dismissible fade show";
+        closeButtonClass = "btn-close";
+        break;
+      case "success":
+        alertClass = "alert alert-success alert-dismissible fade show";
+        closeButtonClass = "btn-close";
+        break;
+      default:
+        alertClass = "alert alert-info alert-dismissible fade show";
+        closeButtonClass = "btn-close";
+    }
+
     if (this.state.showAlert) {
       return (
-        <div
-          className="alert alert-warning alert-dismissible fade show"
-          role="alert"
-        >
+        <div className={alertClass} role="alert">
           {this.state.alertMessage}
           <button
             type="button"
-            className="btn-close"
+            className={closeButtonClass}
             data-bs-dismiss="alert"
             aria-label="Close"
             onClick={this.handleCloseAlert}
@@ -29,16 +49,20 @@ class UploadFile extends Component {
       );
     }
   };
+
+  // close button in alert
   handleCloseAlert = () => {
     this.setState({ showAlert: false });
   };
 
+  // trigger when choosen a file
   onFileChange = (event) => {
     this.setState({
       selectedFile: event.target.files[0],
     });
   };
 
+  // file upload
   onFileUpload = () => {
     if (this.state.selectedFile) {
       // Check if the file extension is .csv or .xls or .xlsx
@@ -51,6 +75,7 @@ class UploadFile extends Component {
       ) {
         this.setState({
           selectedFile: null,
+          alertType: "error",
           showAlert: true,
           alertMessage: "Upload CSV/Excel file for processing",
         });
@@ -64,11 +89,12 @@ class UploadFile extends Component {
         this.state.selectedFile.name
       );
 
+      // call backend endpoint
       axios
-        .post("http://127.0.0.1:8000/server/process/", formData)
+        .post(process.env.REACT_APP_API_URL, formData)
         .then((response) => {
           if (response.status === 200) {
-            const initialEditedValues = {}; // Initialize edited values with original data
+            const initialEditedValues = {};
             for (const [fieldName, value] of Object.entries(
               response.data.dtypes
             )) {
@@ -78,11 +104,14 @@ class UploadFile extends Component {
               responseData: response.data,
               editedValues: initialEditedValues,
               showAlert: true,
+              alertType: "success",
               alertMessage: "File Processed Successfully",
             });
           } else {
+            //show error if error code returned in response
             this.setState({
               showAlert: true,
+              alertType: "error",
               alertMessage: "Something Went Wrong",
             });
           }
@@ -90,9 +119,16 @@ class UploadFile extends Component {
         .catch((error) => {
           this.setState({
             showAlert: true,
+            alertType: "error",
             alertMessage: "Something went wrong",
           });
         });
+    } else {
+      this.setState({
+        showAlert: true,
+        alertType: "error",
+        alertMessage: "Choose a file before upload",
+      });
     }
   };
 
@@ -105,15 +141,15 @@ class UploadFile extends Component {
         [fieldName]: newValue,
       },
     }));
-    console.log(this.state.editedValues);
   };
 
+  // show processed data types
   renderInputs = () => {
     const { responseData, editedValues } = this.state;
     if (responseData) {
       return Object.entries(responseData.dtypes).map(([fieldName, value]) => (
         <div className="mb-3" key={fieldName}>
-          <div class="input-group">
+          <div className="input-group">
             <label className="input-group-text" htmlFor={fieldName}>
               {fieldName}
             </label>
@@ -122,7 +158,11 @@ class UploadFile extends Component {
               aria-describedby="basic-addon3 basic-addon4"
               type="text"
               id={fieldName}
-              value={editedValues[fieldName] || value} // Use edited value if exists
+              value={
+                editedValues[fieldName] !== undefined
+                  ? editedValues[fieldName]
+                  : ""
+              }
               onChange={(event) => this.onEditDataTypes(fieldName, event)}
             />
           </div>
@@ -133,6 +173,7 @@ class UploadFile extends Component {
     }
   };
 
+  // enable update button
   enableUpdateBtn = () => {
     if (this.state.responseData) {
       return (
@@ -149,6 +190,7 @@ class UploadFile extends Component {
     }
   };
 
+  // call backend to update the record
   onUpdateTypes = () => {
     if (this.state.editedValues) {
       const req = {
@@ -156,22 +198,28 @@ class UploadFile extends Component {
         dtypes: this.state.editedValues,
       };
       axios
-        .patch("http://127.0.0.1:8000/server/process/", req)
+        .patch(process.env.REACT_APP_API_URL, req)
         .then((response) => {
           if (response.status === 200) {
             this.setState({
               showAlert: true,
+              alertType: "success",
               alertMessage: "Record Updated Successfully",
             });
           } else {
             this.setState({
               showAlert: true,
+              alertType: "error",
               alertMessage: "Something went wrong",
             });
           }
         })
         .catch((error) => {
-          console.log(error);
+          this.setState({
+            showAlert: true,
+            alertType: "error",
+            alertMessage: "Something went wrong",
+          });
         });
     }
   };
@@ -190,12 +238,7 @@ class UploadFile extends Component {
         </div>
       );
     } else {
-      return (
-        <div>
-          <br />
-          <h5>Choose file before Pressing the Upload button</h5>
-        </div>
-      );
+      return <></>;
     }
   };
 
@@ -222,7 +265,7 @@ class UploadFile extends Component {
               className="btn btn-primary"
               onClick={this.onFileUpload}
             >
-              Upload!
+              Upload
             </button>
           </div>
           <div className="card-body">{this.fileData()}</div>
