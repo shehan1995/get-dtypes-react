@@ -4,6 +4,8 @@ Welcome to the sample app! This repository contains the source code for a react 
 
 DEMO : https://react-frontend-aa41f.web.app/
 
+_**Please note** that, for DEMO you can upload only files upto **30MB** due to a limitation in hosted server_
+
 ## Prerequisites
 
 Before you begin, ensure you have met the following requirements:
