@@ -44,6 +44,8 @@ Once you have installed all the dependencies, you can run the app locally. Follo
    yarn start
    ```
 
+Change .env file in root directory if you need to access backend running in local
+
 2. Open your browser and visit `http://localhost:3000` to view the app.
 
 ## Building the App
