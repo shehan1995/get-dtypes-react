@@ -59,3 +59,7 @@ yarn build
 ```
 
 This will create a production build of the app in the `build` directory.
+
+## Contact
+
+If you have any questions or concerns, feel free to contact me at asrajakaruna@gmail.com.
