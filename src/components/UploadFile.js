@@ -9,6 +9,7 @@ class UploadFile extends Component {
     showAlert: false,
     alertMessage: null,
     alertType: null,
+    loading: false,
   };
 
   // trigger alerts
@@ -64,7 +65,22 @@ class UploadFile extends Component {
 
   // file upload
   onFileUpload = () => {
+    this.setState({ loading: true });
     if (this.state.selectedFile) {
+      // Check if file size is greater than 30MB (30 * 1024 * 1024 bytes)
+      if (
+        this.state.selectedFile.size > 30 * 1024 * 1024 &&
+        process.env.REACT_APP_API_URL === process.env.REACT_APP_API_URL_DEV
+      ) {
+        this.setState({
+          selectedFile: null,
+          alertType: "error",
+          showAlert: true,
+          alertMessage:
+            "Upload file<30MB for DEMO. Run Backend in local if need to process files greater than 30MB",
+          loading: false,
+        });
+      }
       // Check if the file extension is .csv or .xls or .xlsx
       if (
         !(
@@ -78,6 +94,24 @@ class UploadFile extends Component {
           alertType: "error",
           showAlert: true,
           alertMessage: "Upload CSV/Excel file for processing",
+          loading: false,
+        });
+        return;
+      }
+
+      if (
+        !(
+          this.state.selectedFile.name.endsWith(".csv") ||
+          this.state.selectedFile.name.endsWith(".xls") ||
+          this.state.selectedFile.name.endsWith(".xlsx")
+        )
+      ) {
+        this.setState({
+          selectedFile: null,
+          alertType: "error",
+          showAlert: true,
+          alertMessage: "Upload CSV/Excel file for processing",
+          loading: false,
         });
         return;
       }
@@ -106,6 +140,7 @@ class UploadFile extends Component {
               showAlert: true,
               alertType: "success",
               alertMessage: "File Processed Successfully",
+              loading: false,
             });
           } else {
             //show error if error code returned in response
@@ -113,6 +148,7 @@ class UploadFile extends Component {
               showAlert: true,
               alertType: "error",
               alertMessage: "Something Went Wrong",
+              loading: false,
             });
           }
         })
@@ -121,6 +157,7 @@ class UploadFile extends Component {
             showAlert: true,
             alertType: "error",
             alertMessage: "Something went wrong",
+            loading: false,
           });
         });
     } else {
@@ -128,6 +165,7 @@ class UploadFile extends Component {
         showAlert: true,
         alertType: "error",
         alertMessage: "Choose a file before upload",
+        loading: false,
       });
     }
   };
@@ -264,8 +302,9 @@ class UploadFile extends Component {
               type="button"
               className="btn btn-primary"
               onClick={this.onFileUpload}
+              disabled={this.state.loading}
             >
-              Upload
+              {this.state.loading ? "Processing..." : "Upload"}
             </button>
           </div>
           <div className="card-body">{this.fileData()}</div>
