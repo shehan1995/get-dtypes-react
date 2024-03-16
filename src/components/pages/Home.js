@@ -1,6 +1,5 @@
 import React, { Component } from "react";
-import UploadFile from "./UploadFile";
-import ShowHistory from "./ShowHistory";
+import UploadFile from "./../UploadFile";
 
 class Home extends Component {
   render() {
@@ -8,9 +7,6 @@ class Home extends Component {
       <div className="container">
         <br />
         <UploadFile />
-        <br />
-
-        <ShowHistory />
         <br />
       </div>
     );

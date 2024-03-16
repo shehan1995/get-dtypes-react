@@ -1,6 +1,6 @@
 import React, { Component } from "react";
 import axios from "axios";
-import PopModal from "./Modal";
+import PopModal from "./../Modal";
 
 class ShowHistory extends Component {
   constructor(props) {
@@ -92,7 +92,7 @@ class ShowHistory extends Component {
 
   render() {
     return (
-      <>
+      <div className="container">
         <div>
           <PopModal
             data={this.state.data}
@@ -105,7 +105,7 @@ class ShowHistory extends Component {
           <div className="card-header">Processed Files History</div>
           <div className="card-body">{this.showRecords()}</div>
         </div>
-      </>
+      </div>
     );
   }
 }
